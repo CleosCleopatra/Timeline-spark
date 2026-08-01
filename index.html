@@ -1,9 +1,147 @@
 <!DOCTYPE html>
 <html>
+<head>
+
+<title>Project Timeline</title>
+
+<script src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
+
+<link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet">
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    margin:40px;
+    background:#f7f7f7;
+}
+
+h1 {
+    text-align:center;
+}
+
+#timeline {
+    background:white;
+    height:700px;
+    border-radius:12px;
+}
+
+</style>
+
+</head>
+
 <body>
-<h1>TEST PAGE</h1>
-</body>
-</html>
+
+<h1>Project Timeline</h1>
+
+<div id="timeline"></div>
+
+
+<script>
+
+const sheetURL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vTox_xNzPx8-4xMTXq0oV55wZb1bhNKEpHhzlgbyHuwqNjiNvpN90TMONIAqP0q8YxFDWvmvz9iH_Jr/pub?output=csv";
+
+
+async function loadTimeline(){
+
+const response = await fetch(sheetURL);
+
+const data = await response.text();
+console.log(data);
+
+
+const rows = data
+.split("\n")
+.slice(1)
+.map(row => row.split(","));
+
+
+let groups = [];
+let groupIDs={};
+
+let events=[];
+
+
+rows.forEach((row,index)=>{
+
+let year=row[0];
+let month = row[1];
+let day = row[2]
+let title=row[9];
+
+if(!year || !title) return;
+
+let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
+let color = "#4CAF50";
+let category=row[17];
+
+let description=row[10];
+
+
+if(!groupIDs[category]){
+
+groupIDs[category]=groups.length+1;
+
+groups.push({
+
+id:groupIDs[category],
+content:category
+
+});
+
+}
+
+
+events.push({
+
+id:index,
+
+group:groupIDs[category],
+
+content:title,
+
+start:date,
+
+title:description,
+
+style:
+`background:${color};color:white;`
+
+});
+
+
+});
+
+
+new vis.Timeline(
+
+document.getElementById("timeline"),
+
+new vis.DataSet(events),
+
+new vis.DataSet(groups),
+
+{
+
+stack:true,
+
+zoomable:true,
+
+moveable:true,
+
+orientation:"top",
+start: "2026-08-01",
+end: "2027-08-01"
+
+}
+
+);
+
+
+}
+
+loadTimeline();
 
 </script>
 
