@@ -73,7 +73,7 @@ let title=row[9];
 if(!year || !title) return;
 
 let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
-let color = "#4CAF50";
+let color = row[18];
 let category=row[17];
 
 let description=row[10];
