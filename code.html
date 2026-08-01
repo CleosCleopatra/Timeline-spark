@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+
+<title>Timeline</title>
+
+<script src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
+
+<link
+href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css"
+rel="stylesheet"/>
+
+<style>
+
+body{
+font-family:Arial;
+margin:40px;
+background:#f5f5f5;
+}
+
+#timeline{
+height:700px;
+background:white;
+border-radius:10px;
+box-shadow:0 0 15px rgba(0,0,0,.15);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Project Timeline</h1>
+
+<div id="timeline"></div>
+
+<script>
+
+const groups = new vis.DataSet([
+{id:1, content:"Planning"},
+{id:2, content:"Meetings"},
+{id:3, content:"Deadlines"},
+{id:4, content:"Events"}
+]);
+
+const items = new vis.DataSet([
+
+{
+id:1,
+group:1,
+content:"Kickoff",
+start:"2027-01-10",
+style:"background:#4CAF50;color:white;"
+},
+
+{
+id:2,
+group:2,
+content:"Workshop",
+start:"2027-02-12",
+style:"background:#2196F3;color:white;"
+},
+
+{
+id:3,
+group:3,
+content:"Submit Report",
+start:"2027-03-20",
+style:"background:#F44336;color:white;"
+},
+
+{
+id:4,
+group:4,
+content:"Competition",
+start:"2027-05-11",
+style:"background:#9C27B0;color:white;"
+}
+
+]);
+
+const container=document.getElementById("timeline");
+
+const options={
+
+stack:false,
+
+zoomable:true,
+
+moveable:true,
+
+showCurrentTime:true,
+
+orientation:"top",
+
+editable:false
+
+};
+
+new vis.Timeline(container,items,groups,options);
+
+</script>
+
+</body>
+</html>
