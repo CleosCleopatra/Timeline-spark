@@ -69,6 +69,8 @@ let year=row[0];
 let month = row[1];
 let day = row[2]
 
+if(!year || !title) return;
+
 let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
 let title=row[3];
 let category=row[11];
