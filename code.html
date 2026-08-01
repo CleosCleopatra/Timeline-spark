@@ -68,14 +68,15 @@ rows.forEach((row,index)=>{
 let year=row[0];
 let month = row[1];
 let day = row[2]
+let title=row[9];
 
 if(!year || !title) return;
 
 let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
-let title=row[3];
-let category=row[11];
+let color = "#4CAF50";
+let category=row[17];
 
-let description=row[5];
+let description=row[10];
 
 
 if(!groupIDs[category]){
@@ -129,8 +130,8 @@ zoomable:true,
 
 moveable:true,
 
-orientation:"top"
-start: "2026-08-01"
+orientation:"top",
+start: "2026-08-01",
 end: "2027-08-01"
 
 }
