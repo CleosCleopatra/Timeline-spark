@@ -48,6 +48,7 @@ async function loadTimeline(){
 const response = await fetch(sheetURL);
 
 const data = await response.text();
+console.log(data);
 
 
 const rows = data
@@ -68,10 +69,10 @@ let year=row[0];
 let month = row[1];
 let day = row[2]
 
-let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padstart(2,'0')}`;
-let title=row[4];
-let category=row[12];
-#let color=row[3];
+let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
+let title=row[3];
+let category=row[11];
+
 let description=row[5];
 
 
