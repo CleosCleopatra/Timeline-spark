@@ -117,11 +117,13 @@ style:
 new vis.Timeline(
 
 document.getElementById("timeline"),
+    {
 
-new vis.DataSet(events),
+    items: new vis.DataSet(events),
 
-new vis.DataSet(groups),
-
+    groups: new vis.DataSet(groups),
+    },
+    
 {
 
 stack:true,
