@@ -4,6 +4,10 @@
 
 <title>Project Timeline</title>
 
+    
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+
 <script src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
 
 <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet">
@@ -51,10 +55,8 @@ const data = await response.text();
 console.log(data);
 
 
-const rows = data
-.split("\n")
-.slice(1)
-.map(row => row.split(","));
+const parsed = Papa.parse(data, {header:false});
+const rows = parsed.data.slice(1);
 
 
 let groups = [];
@@ -74,7 +76,7 @@ if(!year || !title) return;
 
 let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
 let color = row[6];
-let category=row[5];
+let category=row[5] || "Other";
 
 let description=row[4];
 
@@ -117,6 +119,7 @@ style:
 new vis.Timeline(
 
 document.getElementById("timeline"),
+    
     {
 
     items: new vis.DataSet(events),
