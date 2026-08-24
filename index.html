@@ -117,30 +117,17 @@ style:
 
 
 new vis.Timeline(
-
-document.getElementById("timeline"),
-    
+    document.getElementById("timeline"),
+    new vis.DataSet(events),
+    new vis.DataSet(groups),
     {
-
-    items: new vis.DataSet(events),
-
-    groups: new vis.DataSet(groups),
-    },
-    
-{
-
-stack:true,
-
-zoomable:true,
-
-moveable:true,
-
-orientation:"top",
-start: "2026-08-01",
-end: "2027-08-01"
-
-}
-
+        stack: true,
+        zoomable: true,
+        moveable: true,
+        orientation: "top",
+        start: "2026-08-01",
+        end: "2027-08-01"
+    }
 );
 
 
