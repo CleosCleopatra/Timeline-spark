@@ -49,71 +49,76 @@ const sheetURL =
 
 async function loadTimeline(){
 
-const response = await fetch(sheetURL);
+    const response = await fetch(sheetURL);
 
-const data = await response.text();
-console.log(data);
-
-
-const parsed = Papa.parse(data, {header:false});
-const rows = parsed.data.slice(1);
+    const data = await response.text();
+    console.log(data);
 
 
-let groups = [];
-let groupIDs={};
-
-let events=[];
+    const parsed = Papa.parse(data, {header:false});
+    const rows = parsed.data.slice(1);
 
 
-rows.forEach((row,index)=>{
-    console.log("ROW:", row);
+    let groups = [];
+    let groupIDs={};
 
-let year=row[1];
-let month = row[2];
-let day = row[3]
-let title=row[0];
-
-if(!year || !title) return;
-
-let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
-let color = row[6];
-let category=row[5] || "Other";
-
-let description=row[4];
+    let events=[];
 
 
-if(!groupIDs[category]){
+    rows.forEach((row,index)=>{
+        console.log("ROW:", row);
 
-groupIDs[category]=groups.length+1;
+    let year=row[1];
+    let month = row[2];
+    let day = row[3]
+    let title=row[0];
 
-groups.push({
+    let done = row[7]
 
-id:groupIDs[category],
-content:category
+    if(!year || !title) return;
 
-});
+    let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
+    let color = row[6];
+    let category=row[5] || "Other";
 
-}
+    let description=row[4];
+
+    if(!groupIDs[category]){
+
+        groupIDs[category]=groups.length+1;
+
+        groups.push({
+
+            id:groupIDs[category],
+            content:category
+
+        });
+
+    }
+
+    if(done) {
+        style_type = `background:${color};color:white;border:red`
+    }
+    else{
+        style_type = `background:${color};color:white;`
+    }
 
 
-events.push({
+    events.push({
 
-id:index,
+        id:index,
 
-group:groupIDs[category],
+        group:groupIDs[category],
 
-content:title,
+        content:title,
 
-start:date,
+        start:date,
 
-title:description,
+        title:description,
 
-style:
-`background:${color};color:white;`
-
-});
-
-
+        style:
+            style_type
+    });
 });
 console.log("FINAL EVENTS:", events);
 console.log("FINAL GROUPS:", groups);
