@@ -96,8 +96,10 @@ async function loadTimeline(){
 
     }
 
+    console.log("DONE:", done, typeof done);
+
     if(done) {
-        let style_type = `background:${color};color:white;border:red`
+        let style_type = `background:${color};color:white;border:5px solid red`
     }
     else{
         let style_type = `background:${color};color:white;`
