@@ -14,11 +14,6 @@
 
 
 
-let groups = [];
-let groupIDs={};
-
-
-
 <style>
 
 body {
@@ -29,19 +24,82 @@ body {
 
 h1 {
     text-align:center;
+    margin-bottom: 10px;
+}
+
+.progress {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 16px;
 }
 
 #timeline {
     background:white;
     height:700px;
     border-radius:12px;
+    overflow: hidden;
+}
+
+.vis-labelset .vis-label {
+    font-weight: bold;
 }
 
 .topbar {
     display:flex;
-    gap: 15px;
+    gap: 12px;
     justify-content: center;
+    align-items: center;
     margin-bottom: 50px;
+}
+
+button {
+    padding: 9px 15px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    background: white;
+    border: 1px solid #ccc;
+}
+
+button:hover {
+    background: #eee;
+}
+
+.filter-container {
+    position: relative;
+}
+
+.filter-button {
+    min-width: 150px;
+}
+
+.filter-menu{
+    display: none;
+    position: absolute;
+    top: 42px;
+    left: 0;
+
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+
+    padding: 10px;
+    
+    min-width: 200px;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+    z-index: 10;
+}
+
+.filter-menu label {
+    display: block;
+    padding: 7px;
+    cursor: pointer;
+}
+
+.filter-menu label:hover {
+    background: #f0f0f0;
 }
 
 </style>
@@ -52,16 +110,28 @@ h1 {
 
 <h1>Project Timeline</h1>
 
-<nav class="topbar">
-    <input
-        type = "button"
-        id="fullWindow"
-        value="Show whole timeperiod"
-        />
-        <input type = "button" id = "thisMonth" value="Show current month" />
+<div class="progress" id = "progress">
+    Loading progress...
+</div>
 
-        <select id = "groupFilter" multiple>
-        </select>
+<nav class="topbar">
+    <button id="fullWindow">
+        Show whole period
+    </button>
+
+    <button id = "thisMonth">
+        Show current month
+    </button>
+    
+    <div class="filter-container">
+        <button class="filter-button" id = "filterButton">
+            Groups ▼
+        </button>
+
+        <div class = "filter-menu" id = "filterMenu">
+            <!--Place to create checkboxes-->
+        </div>
+    </div>
 
 </nav>
 
@@ -126,14 +196,14 @@ async function loadTimeline(){
         }
 
 
-        let style_type;
+        let style;
 
         if(done=="TRUE") {
-            style_type = `background:${color};color:white;border:5px solid red`
+            style = `background:${color};color:white;border:4px solid green`
             console.log("style_type:", done, typeof done);
         }
         else{
-            style_type = `background:${color};color:white;`
+            style = `background:${color};color:white;`
             console.log("not done")
         }
 
@@ -145,27 +215,41 @@ async function loadTimeline(){
 
             group:groupIDs[category],
 
-            content:title,
+            content: done == "TRUE"
+                ? "✓ " + title 
+                : title,
 
             start:date,
 
             title:description,
 
-            style:
-                style_type
+            style: style
+            
+            done:done == "TRUE"
         });
     });
 
-    for (let group of groups){
-        const option = document.createElement("option");
+    const filterMenu = document.getElementById("filterMenu");
 
-        option.value = group.id;
-        option.textContent = group.content;
+    groups.forEach(function(group) {
+        const label = document.createElement("label");
 
-        const dropdown = document.getElementById("groupFilter");
+        const checkbox = document.createElement("input");
 
-        dropdown.appendChild(option);
-    }   
+        checkbox.type = "checkbox";
+
+        checkbox.value = group.id;
+
+        checkbox.checked = true;
+
+        label.appendChild(checkbox);
+
+        label.appendChild(
+            document.createTextNode(" " + group.content)
+        );
+
+        filterMenu.appendChild(label);
+    });
 
     console.log("FINAL EVENTS:", events);
     console.log("FINAL GROUPS:", groups);
@@ -193,28 +277,113 @@ async function loadTimeline(){
         }
     );
 
+    const filterButton = document.getElementById("filterButton");
+    const filterMenuElement = document.getElementById("filterMenu");
+
+    filterButton.addEventListener(
+        "click",
+        function() {
+            if (filterMenuElement.style.display == "block") {
+                filterMenuElement.style.display = "none";
+            } else {
+                filterMenuElement.style.display = "block";
+            }
+        }
+    );
+
+    filterMenu.addEventListener(
+        "change",
+        function() {
+            const checkboxes = 
+                filterMenu.querySelectorAll(
+                    "input[type='checkbox']"
+                );
+            
+            const selectedGroups = [];
+
+            checkboxes.forEach(
+                function(checkbox) {
+                    if (checkbox.checked) {
+                        selectedGroups.push(
+                            Number(checkbox.value)
+                        );
+                    }
+                }
+            );
+
+            const filteredEvents = 
+                events.filter(
+                    function(event) {
+                        return selectedGroups.includes(
+                            event.group
+                        );
+                    }
+                );
+            
+                items.clear();
+
+                items.add(filteredEvents);
+
+                const visibleGroups = 
+                    groups.filter(
+                        function(group) {
+                            return selectedGroups.includes(
+                                group.id
+                            );
+                        }
+                    );
+                
+                groupItems.clear();
+
+                groupItems.add(visibleGroups);
+
+                updateProgress(filteredEvents);
+        }
+    );
+
+    function updateProgress(currentEvents) {
+        const completed = 
+            currentEvents.filter(
+                event => event.done
+            ).length;
+
+        const total = currentEvents.length;
+
+        const percentage = 
+            total === 0
+                ? 0
+                : Math.round(
+                    completed/total * 100
+                );
+        
+                document.getElementById("progress").textContent = 
+                    `${completed} of ${total} completed (${percentage}%)`;
+    }
+
+    updateProgress(events);
+
+
+
     document.getElementById("fullWindow").onclick = function() {
         timeline.setWindow("2026-06-01", "2027-06-01");
     };
     document.getElementById("thisMonth").onclick = function() {
-        timeline.setWindow(`${current_year}-${current_month}-${current_day}`, `${current_year}-${current_month+1}-${current_day}`);
+        const now = new Date();
+        const start = 
+            new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                1
+            );
+        
+        const end = 
+            new Date(
+                now.getFullYear(),
+                now.getMonth() + 1,
+                1
+            );
+        timeline.setWindow(start, end);
     };
-
-    const dropdown = document.getElementById("groupFilter");
-
-    dropdown.addEventListener("change", function() {
-
-        const chosenOptions = [...dropdown.selectedOptions].map(function(option) {
-            return Number(option.value);
-        });
-
-        const newOptions = events.filter(function(event){
-            return chosenOptions.includes(event.group)
-        })
-
-        items.clear();
-        items.add(newOptions);
-    });
 }
 
 loadTimeline();
