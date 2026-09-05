@@ -37,7 +37,8 @@ h1 {
 <body>
 
 <h1>Project Timeline</h1>
-<nav>
+
+<nav class="topbar">
     <input
         type = "button"
         id="fullWindow"
@@ -46,6 +47,12 @@ h1 {
         <input type = "button" id = "thisMonth" value="Show current month" /><br />
 
 </nav>
+
+.topbar {
+    display:flex;
+    gap: 15px;
+    justify-content: center;
+}
 
 <div id="timeline"></div>
 
