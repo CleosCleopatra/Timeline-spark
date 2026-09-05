@@ -40,12 +40,21 @@ h1 {
 
 <div id="timeline"></div>
 
+<p>
+    <input
+        type = "button"
+        id="fullWindow"
+        value="Show whole timeperiod"
+        /><br />
+        <input type = "button" id = "thisMonth" value="Show current month" /><br />
+
+</p>
+
 
 <script>
 
 const sheetURL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vTox_xNzPx8-4xMTXq0oV55wZb1bhNKEpHhzlgbyHuwqNjiNvpN90TMONIAqP0q8YxFDWvmvz9iH_Jr/pub?output=csv";
-
 
 async function loadTimeline(){
 
@@ -67,6 +76,7 @@ async function loadTimeline(){
 
     rows.forEach((row,index)=>{
         console.log("ROW:", row);
+
 
     let year=row[1];
     let month = row[2];
@@ -108,6 +118,19 @@ async function loadTimeline(){
         console.log("not done")
     }
 
+    const current_date = new Date();
+    let current_day = current_date.getDate();
+    let current_month = current_date.getMonth() + 1;
+    let current_year = current_date.getFullYear();
+
+    document.getElementById("fullWindow").onclick = function() {
+        timeline.setWindow("2026-06-01", "2027-06-01");
+    };
+    document.getElementById("thisMonth").onclick = function() {
+        timeline.setWindow(`${current_year}-${current_month}-${current_day}`, `${current_year}-${current_month+1}-${current_day}`);
+    };
+
+
 
     events.push({
 
@@ -128,19 +151,23 @@ async function loadTimeline(){
 console.log("FINAL EVENTS:", events);
 console.log("FINAL GROUPS:", groups);
 
-new vis.Timeline(
-    document.getElementById("timeline"),
-    new vis.DataSet(events),
-    new vis.DataSet(groups),
+const items = new vis.DataSet(events);
+const groupItems = new vis.DataSet(groups);
+
+const timeline = new vis.Timeline(
+    document.getElementById("timelins"),
+    items,
+    groupItems,
     {
         stack: true,
-        zoomable: true,
+        zoomable: false,
         moveable: true,
         orientation: "top",
         start: "2026-08-01",
         end: "2027-08-01"
     }
 );
+
 
 
 }
