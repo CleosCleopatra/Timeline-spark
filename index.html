@@ -12,6 +12,13 @@
 
 <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet">
 
+
+
+let groups = [];
+let groupIDs={};
+
+
+
 <style>
 
 body {
@@ -53,6 +60,10 @@ h1 {
         />
         <input type = "button" id = "thisMonth" value="Show current month" />
 
+        <select id = "groupFilter" multiple>
+            <option></option>
+        </select>
+
 </nav>
 
 <div id="timeline"></div>
@@ -79,6 +90,7 @@ async function loadTimeline(){
     let groups = [];
     let groupIDs={};
 
+
     let events=[];
 
 
@@ -86,97 +98,125 @@ async function loadTimeline(){
         console.log("ROW:", row);
 
 
-    let year=row[1];
-    let month = row[2];
-    let day = row[3]
-    let title=row[0];
+        let year=row[1];
+        let month = row[2];
+        let day = row[3]
+        let title=row[0];
 
-    let done = row[7]
+        let done = row[7]
 
-    if(!year || !title) return;
+        if(!year || !title) return;
 
-    let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
-    let color = row[6];
-    let category=row[5] || "Other";
+        let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
+        let color = row[6];
+        let category=row[5] || "Other";
 
-    let description=row[4];
+        let description=row[4];
 
-    if(!groupIDs[category]){
+        if(!groupIDs[category]){
 
-        groupIDs[category]=groups.length+1;
+            groupIDs[category]=groups.length+1;
 
-        groups.push({
+            groups.push({
 
-            id:groupIDs[category],
-            content:category
+                id:groupIDs[category],
+                content:category
 
+            });
+
+        }
+
+
+        let style_type;
+
+        if(done=="TRUE") {
+            style_type = `background:${color};color:white;border:5px solid red`
+            console.log("style_type:", done, typeof done);
+        }
+        else{
+            style_type = `background:${color};color:white;`
+            console.log("not done")
+        }
+
+
+
+        events.push({
+
+            id:index,
+
+            group:groupIDs[category],
+
+            content:title,
+
+            start:date,
+
+            title:description,
+
+            style:
+                style_type
         });
-
-    }
-
-
-    let style_type;
-
-    if(done=="TRUE") {
-        style_type = `background:${color};color:white;border:5px solid red`
-        console.log("style_type:", done, typeof done);
-    }
-    else{
-        style_type = `background:${color};color:white;`
-        console.log("not done")
-    }
-
-
-
-    events.push({
-
-        id:index,
-
-        group:groupIDs[category],
-
-        content:title,
-
-        start:date,
-
-        title:description,
-
-        style:
-            style_type
     });
-});
-console.log("FINAL EVENTS:", events);
-console.log("FINAL GROUPS:", groups);
 
-const current_date = new Date();
-let current_day = current_date.getDate();
-let current_month = current_date.getMonth() + 1;
-let current_year = current_date.getFullYear();
+    for (group in groups){
+        const option = document.createElement("option");
 
-const items = new vis.DataSet(events);
-const groupItems = new vis.DataSet(groups);
+        option.value = group.id;
+        option.textContent = group.content;
 
-const timeline = new vis.Timeline(
-    document.getElementById("timeline"),
-    items,
-    groupItems,
-    {
-        stack: true,
-        zoomable: false,
-        moveable: true,
-        orientation: "top",
-        start: "2026-08-01",
-        end: "2027-08-01"
-    }
-);
+        const dropdown = document.getElementById("groupFilter");
 
-document.getElementById("fullWindow").onclick = function() {
-    timeline.setWindow("2026-06-01", "2027-06-01");
-};
-document.getElementById("thisMonth").onclick = function() {
-    timeline.setWindow(`${current_year}-${current_month}-${current_day}`, `${current_year}-${current_month+1}-${current_day}`);
-};
+        dropdown.appendChild(option);
+    }   
+
+    console.log("FINAL EVENTS:", events);
+    console.log("FINAL GROUPS:", groups);
+
+    const current_date = new Date();
+    let current_day = current_date.getDate();
+    let current_month = current_date.getMonth() + 1;
+    let current_year = current_date.getFullYear();
+
+    const items = new vis.DataSet(events);
+    const groupItems = new vis.DataSet(groups);
 
 
+    const timeline = new vis.Timeline(
+        document.getElementById("timeline"),
+        items,
+        groupItems,
+        {
+            stack: true,
+            zoomable: false,
+            moveable: true,
+            orientation: "top",
+            start: "2026-08-01",
+            end: "2027-08-01"
+        }
+    );
+
+    document.getElementById("fullWindow").onclick = function() {
+        timeline.setWindow("2026-06-01", "2027-06-01");
+    };
+    document.getElementById("thisMonth").onclick = function() {
+        timeline.setWindow(`${current_year}-${current_month}-${current_day}`, `${current_year}-${current_month+1}-${current_day}`);
+    };
+
+    const dropdown = document.getElementById("groupFilter");
+
+    dropdown.addEventListener("change", function() {
+
+        const chosenOptions = [...dropdown.selectedOptions].map(function(option) {
+            return option.value;
+        });
+    });
+
+    const newOptions = events.filer(function(chosenOptions){
+        return selectedGroups.includes(chosenOptions.group)
+    })
+
+    items.clear();
+
+    items.add(newOptions);
 }
 
 loadTimeline();
