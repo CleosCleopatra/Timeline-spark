@@ -37,10 +37,7 @@ h1 {
 <body>
 
 <h1>Project Timeline</h1>
-
-<div id="timeline"></div>
-
-<p>
+<nav>
     <input
         type = "button"
         id="fullWindow"
@@ -48,7 +45,10 @@ h1 {
         /><br />
         <input type = "button" id = "thisMonth" value="Show current month" /><br />
 
-</p>
+</nav>
+
+<div id="timeline"></div>
+
 
 
 <script>
@@ -161,17 +161,18 @@ const timeline = new vis.Timeline(
     }
 );
 
-
-}
-
-loadTimeline();
-
 document.getElementById("fullWindow").onclick = function() {
     timeline.setWindow("2026-06-01", "2027-06-01");
 };
 document.getElementById("thisMonth").onclick = function() {
     timeline.setWindow(`${current_year}-${current_month}-${current_day}`, `${current_year}-${current_month+1}-${current_day}`);
 };
+
+
+}
+
+loadTimeline();
+
 
 
 </script>
