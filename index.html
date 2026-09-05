@@ -118,18 +118,6 @@ async function loadTimeline(){
         console.log("not done")
     }
 
-    const current_date = new Date();
-    let current_day = current_date.getDate();
-    let current_month = current_date.getMonth() + 1;
-    let current_year = current_date.getFullYear();
-
-    document.getElementById("fullWindow").onclick = function() {
-        timeline.setWindow("2026-06-01", "2027-06-01");
-    };
-    document.getElementById("thisMonth").onclick = function() {
-        timeline.setWindow(`${current_year}-${current_month}-${current_day}`, `${current_year}-${current_month+1}-${current_day}`);
-    };
-
 
 
     events.push({
@@ -151,11 +139,23 @@ async function loadTimeline(){
 console.log("FINAL EVENTS:", events);
 console.log("FINAL GROUPS:", groups);
 
+const current_date = new Date();
+let current_day = current_date.getDate();
+let current_month = current_date.getMonth() + 1;
+let current_year = current_date.getFullYear();
+
+document.getElementById("fullWindow").onclick = function() {
+    timeline.setWindow("2026-06-01", "2027-06-01");
+};
+document.getElementById("thisMonth").onclick = function() {
+    timeline.setWindow(`${current_year}-${current_month}-${current_day}`, `${current_year}-${current_month+1}-${current_day}`);
+};
+
 const items = new vis.DataSet(events);
 const groupItems = new vis.DataSet(groups);
 
 const timeline = new vis.Timeline(
-    document.getElementById("timelins"),
+    document.getElementById("timeline"),
     items,
     groupItems,
     {
