@@ -61,7 +61,6 @@ h1 {
         <input type = "button" id = "thisMonth" value="Show current month" />
 
         <select id = "groupFilter" multiple>
-            <option></option>
         </select>
 
 </nav>
@@ -157,7 +156,7 @@ async function loadTimeline(){
         });
     });
 
-    for (group in groups){
+    for (let group of groups){
         const option = document.createElement("option");
 
         option.value = group.id;
@@ -206,17 +205,16 @@ async function loadTimeline(){
     dropdown.addEventListener("change", function() {
 
         const chosenOptions = [...dropdown.selectedOptions].map(function(option) {
-            return option.value;
+            return Number(option.value);
         });
+
+        const newOptions = events.filter(function(event){
+            return chosenOptions.includes(event.group)
+        })
+
+        items.clear();
+        items.add(newOptions);
     });
-
-    const newOptions = events.filer(function(chosenOptions){
-        return selectedGroups.includes(chosenOptions.group)
-    })
-
-    items.clear();
-
-    items.add(newOptions);
 }
 
 loadTimeline();
