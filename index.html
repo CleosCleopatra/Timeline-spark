@@ -30,6 +30,12 @@ h1 {
     border-radius:12px;
 }
 
+.topbar {
+    display:flex;
+    gap: 15px;
+    justify-content: center;
+}
+
 </style>
 
 </head>
@@ -43,16 +49,10 @@ h1 {
         type = "button"
         id="fullWindow"
         value="Show whole timeperiod"
-        /><br />
-        <input type = "button" id = "thisMonth" value="Show current month" /><br />
+        />
+        <input type = "button" id = "thisMonth" value="Show current month" />
 
 </nav>
-
-.topbar {
-    display:flex;
-    gap: 15px;
-    justify-content: center;
-}
 
 <div id="timeline"></div>
 
