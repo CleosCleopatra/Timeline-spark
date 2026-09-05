@@ -144,13 +144,6 @@ let current_day = current_date.getDate();
 let current_month = current_date.getMonth() + 1;
 let current_year = current_date.getFullYear();
 
-document.getElementById("fullWindow").onclick = function() {
-    timeline.setWindow("2026-06-01", "2027-06-01");
-};
-document.getElementById("thisMonth").onclick = function() {
-    timeline.setWindow(`${current_year}-${current_month}-${current_day}`, `${current_year}-${current_month+1}-${current_day}`);
-};
-
 const items = new vis.DataSet(events);
 const groupItems = new vis.DataSet(groups);
 
@@ -169,10 +162,17 @@ const timeline = new vis.Timeline(
 );
 
 
-
 }
 
 loadTimeline();
+
+document.getElementById("fullWindow").onclick = function() {
+    timeline.setWindow("2026-06-01", "2027-06-01");
+};
+document.getElementById("thisMonth").onclick = function() {
+    timeline.setWindow(`${current_year}-${current_month}-${current_day}`, `${current_year}-${current_month+1}-${current_day}`);
+};
+
 
 </script>
 
