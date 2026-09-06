@@ -109,11 +109,14 @@ button:hover {
 }
 
 .group-person {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: normal;
     color: #666;
-    margin-left: 8px;
-    line-height: 1.4;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    max-width: 180px;
 }
 
 </style>
@@ -217,13 +220,18 @@ async function loadTimeline(){
 
             const people = peopleDict[category] || [];
 
+            const peopelHTML = people 
+                .split(",")
+                .map(person => `<span>${person.trim()}</span>`)
+                .join("");
+
             groups.push({
 
                 id:groupIDs[category],
                 name: category,
                 content: `
                     <div class = "group-name">${category}</div>
-                    <div class="group-person">${people}</div>`
+                    <div class="group-person">${peopleHTML}</div>`
             });
 
         }
