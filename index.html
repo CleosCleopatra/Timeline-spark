@@ -334,6 +334,8 @@ async function loadTimeline(){
     let current_month = current_date.getMonth() + 1;
     let current_year = current_date.getFullYear();
 
+    console.log("test")
+    
     const items = new vis.DataSet(events);
     const groupItems = new vis.DataSet(groups);
 
@@ -351,6 +353,11 @@ async function loadTimeline(){
             end: "2027-08-01",
         }
     );
+    document.querySelector(".vis-labelset .vis-label").innerHTML = `
+        <div style="font-size:30px !important; font-weight:900 !important; color:red !important;">
+            TEST
+        </div>
+    `;
 
     const filterButton = document.getElementById("filterButton");
     const filterMenuElement = document.getElementById("filterMenu");
