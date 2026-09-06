@@ -49,6 +49,13 @@ h1 {
     display: block;
 }
 
+.vis-labelset .vis-label .group-person .person-line{
+    display: block !important;
+    white-space: nowrap;
+    margin: 0;
+    line-height: 1.25;
+}
+
 .topbar {
     display:flex;
     gap: 12px;
@@ -232,7 +239,7 @@ async function loadTimeline(){
                 .split(",")
                 .map(person => person.trim())
                 .filter(person => person !== "")
-                .map(person => `<span>${person}</span>`)
+                .map(person => `<div class = "person-line">${person}</div>`)
                 .join("");
 
             groups.push({
