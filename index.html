@@ -338,16 +338,7 @@ async function loadTimeline(){
             end: "2027-08-01",
 
             groupTemplate: function (group) {
-                const peopleHTML = (group.people || [])
-                    .map(name => `<div class="person-line">${name}</div>`)
-                    .join("");
-                
-                    return `
-                        <div class="group-wrap">
-                            <div class="group-title">${group.category || group.content}</div>
-                            <div class="group-people">${peopleHTML}</div>
-                        </div>
-                    `;
+                return "TEST " + group.category;
             }
         }
     );
