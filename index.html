@@ -67,6 +67,24 @@ h1 {
     margin: 0 !important;
 }
 
+.group-title{
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #111 !important;
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+.group-people{
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    color: #666 !important;
+    line-height: 1.25;
+}
+
+.group-people .person-line{
+    display:block;
+}
 
 
 .topbar {
@@ -244,16 +262,12 @@ async function loadTimeline(){
 
             groups.push({
                 id:groupIDs[category],
-                name: category,
-                content: `
-                    <div>
-                        <div style = "font-size:16px; font-weight:700; line-height:1.2;margin-bottom:4px;color:#111;">
-                            ${category}
-                        </div>
-                        <div style = "font-size: 12px; font-weight:400; line-height:1.25; color:#666;">
-                            ${peopleHTML}
-                        </div>
-                    </div>`
+                content: category,
+                category: category,
+                people: people
+                    .split(",")
+                    .map(p => p.trim())
+                    .filter(Boolean)
             });
 
         }
@@ -336,7 +350,20 @@ async function loadTimeline(){
             moveable: true,
             orientation: "top",
             start: "2026-08-01",
-            end: "2027-08-01"
+            end: "2027-08-01",
+
+            groupTemplate: function (group) {
+                const peopleHTML = (group.people || [])
+                    .map(name => `<div class="person-line">${name}</div>`)
+                    .join("");
+                
+                    return `
+                        <div class="group-wrap">
+                            <div class="group-title">${group.category || group.content}</div>
+                            <div class="group-people">${peopleHtml}</div>
+                        </div>
+                    `;
+            }
         }
     );
 
