@@ -221,12 +221,18 @@ async function loadTimeline(){
 
             groupIDs[category]=groups.length+1;
 
-            const people = peopleDict[category] || "";
-
+            const people = String(peopleDict[category] || "");
+            
+            console.log("category: ", category);
             console.log("people: ", people)
+            console.log("type: ", typeof people);
+
+
             const peopleHTML = people 
                 .split(",")
-                .map(person => `<span>${person.trim()}</span>`)
+                .map(person => person.trim())
+                .filter(person => person !== "")
+                .map(person => `<span>${person}</span>`)
                 .join("");
 
             groups.push({
