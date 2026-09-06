@@ -142,6 +142,101 @@ button:hover {
     background: #eee;
 }
 
+#meetingViewContainer {
+    display: none;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.meeting-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.meeting-header h2 {
+    margin: 0;
+}
+
+.meeting-dates {
+    color: #666;
+    font-size: 14px;
+}
+
+.meeting-summary{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.summary-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+.summary-number {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom:5px;
+}
+
+.summary-label {
+    color: #666;
+}
+
+.meeting-section{
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd
+}
+
+.meeting-section h3 {
+    margin-top: 0;
+}
+
+.meeting-task {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.meeting-task:last-child {
+    border-bottom: none;
+}
+
+.meeting-task-title {
+    font-weight: bold;
+}
+
+
+.meeting-task-info {
+    font-size: 13px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.overdue {
+    border-left: 5px solid #d33;
+}
+
+.completed {
+    border-left: 5px solid #2a9d55;
+}
+
+.upcoming {
+    border-left: 5px solid #e0a000;
+}
+
+.empty-message {
+    color: #777;
+    font-style: italic;
+}
+
 .filter-container {
     position: relative;
 }
@@ -205,6 +300,10 @@ button:hover {
     <button id = "incompleteOnly">
         Show Incomplete only
     </button>
+
+    <button id = "meetingView">
+        Meeting View
+    </button>
     
     <div class="filter-container">
         <button class="filter-button" id = "filterButton">
@@ -219,6 +318,7 @@ button:hover {
 </nav>
 
 <div id="timeline"></div>
+<div id="meetingViewContainer"></div>
 
 
 
@@ -234,6 +334,370 @@ const peopleURL =
 
 const updateURL = 
 "https://script.google.com/macros/s/AKfycby3fhEZisevJQIDVZIpjtJ3lOUYQNXawk5jXrEhFDIHUSr2_ntukOXSPLbJ2hoqTasU/exec";
+
+
+function showMeetingView(event, groups) {
+    const container = 
+        document.getElementById("meetingViewContainer");
+
+    const timeline = 
+        document.getElementById("timeline");
+    
+    const progress = 
+        document.groupItems("progress");
+    
+    const topbar = 
+        document.querySelector(".topbar");
+
+    timeline.style.display = "none";
+    progress.style.display = "none";
+    topbar.style.display = "none";
+
+    container.style.display = "block";
+
+
+    const today = new Date();
+
+    today.setHours(0,0,0,0);
+
+
+    const overdue = events.filter(event => {
+        const date = new Date(event.start);
+        data.setHours(0,0,0,0);
+
+        return date < today && !event.done;
+    });
+
+    const defaultNextMeeting = new Date(today);
+
+    defaultNextMeeting.setDate(
+        defaultNextMeeting.getDate() + 31
+    );
+
+    function renderMeetingView(nextMeeting) {
+        const dueBeforeNextMeeting = 
+            events.filter(event => {
+                if (event.done) {
+                    return false;
+                }
+
+                const date = new Date(event.start);
+
+                date.setHours(0,0,0,0);
+
+                return date >= today &&
+                    date <= nextMeeting;
+            });
+    
+        const completed = events.filter(event => event.done).length;
+        const incomplete = event.filter(event => !event.done).length;
+
+        container.innterHTML = `
+
+            <div class="meeting-header">
+
+                <div>
+
+                    <h2>Meeting overview</h2>
+
+                    <div class="meeting-dates">
+                        Today: 
+                        ${formatDate(today)}
+                    </div>
+                </div>
+
+                <button id = "backToTimeline">
+                    Back to timeline
+                </button>
+            </div>
+            <div class = "next-meeting-control">
+                <label for="nextMeetingDate">
+                    <strong>Next meeting:</strong>
+                </label>
+
+                <input
+                    type="date"
+                    id="nextMeetingDate"
+                    value = "${formatInputDate(nextMeeting)}"
+                <
+            </div>
+
+            <div class="meeting-summary">
+                <div class ="summary-card">
+                    <div class = "summary-number">
+                        ${overdue.length}
+                    </div>
+
+                    <div class = "summary-label">
+                        Overdue
+                    </div>
+                
+                </div>
+
+                <div class="summary-card">
+                    <div class="summary-number">
+                        ${dueByNextMeeting.length}
+                    </div>
+
+                    <div class = "summary-label">
+                        Due by next meeting
+                    </div>
+                </div>
+
+                <div class ="summary-card">
+                    <div class="summary-number">
+                        ${completed}
+                    </div>
+
+                    <div class="summary-label">
+                        Completed
+                    </div>
+                </div>
+
+                
+                <div class="summary-card">
+
+                    <div class="summary-number">
+                        ${incomplete}
+                    </div>
+
+                    <div class="summary-label">
+                        Incomplete
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="meeting-section overdue">
+
+                <h3>
+                    🔴 Overdue tasks
+                </h3>
+
+                ${renderTasks(
+                    overdue,
+                    groups,
+                    "No overdue tasks."
+                )}
+
+            </div>
+
+            <div class="meeting-section upcoming">
+
+                <h3>
+                    🟡 Tasks due by
+                    ${formatDate(nextMeeting)}
+                </h3>
+
+                ${renderTasks(
+                    dueByNextMeeting,
+                    groups,
+                    "No tasks are due before the next meeting."
+                )}
+
+            </div>
+
+            <div class="meeting-section">
+
+                <h3>
+                    👥 Group status
+                </h3>
+
+                ${renderGroupStatus(
+                    events,
+                    groups,
+                    today,
+                    nextMeeting
+                )}
+
+            </div>
+    `;
+
+    document
+        .getElementById("backToTimeline")
+        .onclick = function() {
+            container.style.display = "none";
+            timeline.style.display = "block";
+            progress.style.display = "block";
+            topbar.style.display = "flex";
+        };
+
+    document
+        .getElementById("nextMeetingDate")
+        .addEventListener(
+            "change",
+            function() {
+                const selectedDate = 
+                    new Date(this.value);
+
+                selectedDate.setHours( 
+                    0,0,0,0
+                );
+
+                renderMeetingView(
+                    selectedDate
+                );
+            }
+        );
+        }
+    renderMeetingView(defaultNextMeeting)
+}
+
+function renderTasks(tasks, groups, emptyText){
+    if (tasks.length === 0){
+        return `
+            <div class="empty-message">
+                ${emptyText}
+            </div>
+        `;
+
+    }
+
+    return tasks.map(event=> {
+        const group = groups.find(g=> g.id === event.group);
+
+        return `
+
+            <div class="meeting-task">
+
+                <div class="meeting-task-title">
+                    ${event.done ? "✓ " : ""}
+                    ${event.content.replace("✓ ", "")}
+                </div>
+
+                <div class="meeting-task-info">
+
+                    Due:
+                    ${formatDate(new Date(event.start))}
+
+                    &nbsp; • &nbsp;
+
+                    Group:
+                    ${group ? group.name : "Unknown"}
+
+                    ${
+                        event.completedDate
+                        ? `
+                            &nbsp; • &nbsp;
+                            Completed:
+                            ${formatDate(
+                                new Date(event.completedDate)
+                            )}
+                        `
+                        : ""
+                    }
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+function formatDate(date) {
+    return date.toLocaleDataString( 
+        "en-GB",
+        {
+            day: "numeric",
+            month: "short",
+            year: "numberic"
+        }
+    );
+}
+
+function formatInputDate(date) {
+
+    const year = date.getFullYear();
+
+    const month = String(
+        date.getMonth() + 1
+    ).padStart(2, "0");
+
+    const day = String(
+        date.getDate()
+    ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+function renderGroupStatus(
+    events,
+    groups,
+    today,
+    nextMeeting
+) {
+
+    return groups.map(group => {
+
+        const groupEvents =
+            events.filter(
+                event =>
+                    event.group === group.id
+            );
+
+
+        const overdue =
+            groupEvents.filter(event => {
+
+                if (event.done) {
+                    return false;
+                }
+
+                const date =
+                    new Date(event.start);
+
+                date.setHours(0, 0, 0, 0);
+
+                return date < today;
+
+            });
+
+
+        const upcoming =
+            groupEvents.filter(event => {
+
+                if (event.done) {
+                    return false;
+                }
+
+                const date =
+                    new Date(event.start);
+
+                date.setHours(0, 0, 0, 0);
+
+                return date >= today &&
+                       date <= nextMeeting;
+
+            });
+
+
+        return `
+
+            <div class="meeting-task">
+
+                <div class="meeting-task-title">
+                    ${group.name}
+                </div>
+
+                <div class="meeting-task-info">
+
+                    ${overdue.length}
+                    overdue
+
+                    &nbsp; • &nbsp;
+
+                    ${upcoming.length}
+                    due by next meeting
+
+                </div>
+
+            </div>
+
+        `;
+
+    }).join("");
+
+}
+
 async function loadTimeline(){
 
     let selectedGroups = [];
@@ -466,6 +930,15 @@ async function loadTimeline(){
 
     const incompleteButton = document.getElementById("incompleteOnly")
 
+    const meetingButton = document.getElementById("meetingView");
+
+    meetingButton.addEventListener(
+        "click",
+        function() {
+            showMeetingView(events, groups);
+        }
+    );
+
     incompleteButton.addEventListener(
         "click",
         function() {
@@ -487,6 +960,8 @@ async function loadTimeline(){
         }
     )
 
+    //9: Meeting view button that gives us an overview of what is overdue, what has been completed since last meeting and what needs to be done until next meeting
+
     filterButton.addEventListener(
         "click",
         function() {
@@ -501,6 +976,8 @@ async function loadTimeline(){
     filterMenu.addEventListener(
         "change",
         function() {
+
+            selectedGroups = [];
             const checkboxes = 
                 filterMenu.querySelectorAll(
                     "input[type='checkbox']"
