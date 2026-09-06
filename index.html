@@ -39,6 +39,48 @@ h1 {
     border-radius:12px;
 }
 
+#eventPopup {
+    position:fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1000;
+}
+
+.event-popup-content {
+    position: relative;
+    background: white; 
+    width: min(500px, 90vw);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25)
+}
+
+.close-popup {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+
+    font-size: 24px;
+
+    border:none;
+    background: transparent;
+}
+
+#doneButton {
+    width: 100%;
+    padding: 12px;
+    background: #222;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
 
 .group-wrap {
     display: block;
@@ -185,6 +227,9 @@ const sheetURL =
 const peopleURL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vTox_xNzPx8-4xMTXq0oV55wZb1bhNKEpHhzlgbyHuwqNjiNvpN90TMONIAqP0q8YxFDWvmvz9iH_Jr/pub?gid=2008934100&single=true&output=csv";
 
+
+const updateURL = 
+"https://script.google.com/macros/s/AKfycby3fhEZisevJQIDVZIpjtJ3lOUYQNXawk5jXrEhFDIHUSr2_ntukOXSPLbJ2hoqTasU/exec";
 async function loadTimeline(){
 
     const response = await fetch(sheetURL);
@@ -264,12 +309,23 @@ async function loadTimeline(){
 
         }
 
+        const eventDate = new Date(date);
+        const today = new Date();
+
+        today.setHours(0,0,0,0);
+        eventDate.setHours(0,0,0,0);
+
+        const isOverdue = eventDate < today && done !== "TRUE";
+
 
         let style;
 
         if(done=="TRUE") {
             style = `background:${color};color:white;border:4px solid green`
             console.log("style_type:", done, typeof done);
+        }
+        else if (isOverdue){
+            style = `background:${color};color:white;border:4px solid red;`;
         }
         else{
             style = `background:${color};color:white;`
@@ -281,6 +337,8 @@ async function loadTimeline(){
         events.push({
 
             id:index,
+
+            sheetRow: index + 2,
 
             group:groupIDs[category],
 
@@ -378,6 +436,25 @@ async function loadTimeline(){
         }
     );
 
+    timeline.on("select", function(properties) {
+        if (properties.items.length === 0) {
+            return;
+        }
+
+        const eventID = properties.items[0];
+
+        const event = events.find(
+            e => e.id === eventID
+
+        );
+
+        if (!event){
+            return;
+        }
+
+        showEventPopup(event);
+    })
+
     const filterButton = document.getElementById("filterButton");
     const filterMenuElement = document.getElementById("filterMenu");
 
@@ -443,12 +520,19 @@ async function loadTimeline(){
     );
 
     function updateProgress(currentEvents) {
+
+        const today = new Date();
+
+        const dueByToday = currentEvents.filter(event =>
+            new Date(event.start) <= today
+        );
+
         const completed = 
-            currentEvents.filter(
+            dueByToday.filter(
                 event => event.done
             ).length;
 
-        const total = currentEvents.length;
+        const total = dueByToday.length;
 
         const percentage = 
             total === 0
@@ -487,6 +571,98 @@ async function loadTimeline(){
 
     updateProgress(events);
 
+}
+
+async function setEventDone(event, done) {
+    try{
+        const response = await fetch(updateURL, {
+            method: "POST",
+            body: JSON.stringify({
+                row:event.sheetRow,
+                done: done
+            })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.error);
+        }
+
+        event.done = done;
+
+        location.reload();
+    } catch (error) {
+        console.error(error);
+
+        alert(
+            "Could not update the assignment. Please try again"
+        );
+    }
+}
+
+function showEventPopup(event) {
+    const existing = document.getElementById("eventPopup");
+
+    if (existing) {
+        existing.remove();
+    }
+
+    const popup = document.createElement("div");
+
+    popup.id = "eventPopup";
+
+    popup.innerHTML = `
+        <div class="event-popup-content">
+            <button class="close-popup"
+                    onclick="document.getElementByID('eventPopup').remove()">
+                ×
+            </button>
+
+            <h2>${event.content}</h2>
+
+            <p>
+                <strong>Date:</strong>
+                ${event.start}
+            </p>
+
+            <p>
+                <strong>Group:</strong>
+                ${groups.find(g=> g.id === event.group)?.name || ""}
+            </p>
+
+            <p>
+                ${event.title || "No description available."}
+            </p>
+
+            <hr>
+
+            <p>
+                <strong>Status:</strong>
+                ${event.done
+                    ? "✓ Completed"
+                    : "Not completed"
+                }
+            </p>
+
+            <button if="doneButton">
+                ${event.done
+                    ? "↩ Mark as incomplete"
+                    : "✓ Mark as done"
+                }
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    document.getElementById("doneButton").onclick = 
+        function() {
+            setEventDone(
+                event, 
+                !event.done
+            );
+        };
 }
 
 loadTimeline();
