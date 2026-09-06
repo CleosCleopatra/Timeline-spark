@@ -338,7 +338,38 @@ async function loadTimeline(){
             end: "2027-08-01",
 
             groupTemplate: function (group) {
-                return "TEST " + group.category;
+                let html = `
+                    <div style="
+                        font-family: Arial, sans-serif;
+                        text-align: left;
+                    ">
+                        <div style="
+                            font-size: 18px;
+                            font-weight: bold;
+                            line-height: 1.2;
+                            margin-bottom: 5px;
+                        ">
+                            ${group.category}
+                        </div>
+                `;
+
+                for (let person of (group.people || [])) {
+                    html += `
+                        <div style="
+                            font-size: 12px;
+                            font-weight: normal;
+                            line-height: 1.25;
+                            color: #666;
+                        ">
+
+                            ${person}
+                        
+                        </div>
+                    `;
+                }
+
+                html +=  `</div>`;
+                return html;
             }
         }
     );
