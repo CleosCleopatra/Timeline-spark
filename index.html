@@ -201,6 +201,10 @@ button:hover {
     <button id = "thisMonth">
         Show current month
     </button>
+
+    <button id = "incompleteOnly">
+        Show Incomplete only
+    </button>
     
     <div class="filter-container">
         <button class="filter-button" id = "filterButton">
@@ -457,6 +461,41 @@ async function loadTimeline(){
 
     const filterButton = document.getElementById("filterButton");
     const filterMenuElement = document.getElementById("filterMenu");
+
+    const incompleteButton = document.getElementById("incompleteOnly")
+
+    incompleteButton.addEventListener(
+        "click",
+        function() {
+            const eventsFilteredIncomplete = 
+                events.filter(
+                    function(event) {
+                        return events.done !== "TRUE"
+                    }
+                );
+
+            items.clear();
+
+            items.add(eventsFilteredIncomplete);
+
+            const visibleGroupsIncomplete = 
+                groups.filter(
+                    function(group) {
+                        return selectedGroups.includes(
+                            group.id
+                        );
+                    }
+                );
+            
+            groupItems.clear();
+
+            groupItems.add(visibleGroupsIncomplete);
+
+            updateProgress(eventsFilteredIncomplete);
+        }
+
+
+    )
 
     filterButton.addEventListener(
         "click",
