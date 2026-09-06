@@ -220,6 +220,7 @@ async function loadTimeline(){
             groups.push({
 
                 id:groupIDs[category],
+                name: category,
                 content: `
                     <div class = "group-name">${category}</div>
                     <div class="group-person">${people}</div>`
@@ -277,7 +278,7 @@ async function loadTimeline(){
         label.appendChild(checkbox);
 
         label.appendChild(
-            document.createTextNode(" " + group.content)
+            document.createTextNode(" " + group.name)
         );
 
         filterMenu.appendChild(label);
