@@ -236,6 +236,8 @@ const updateURL =
 "https://script.google.com/macros/s/AKfycby3fhEZisevJQIDVZIpjtJ3lOUYQNXawk5jXrEhFDIHUSr2_ntukOXSPLbJ2hoqTasU/exec";
 async function loadTimeline(){
 
+    let selectedGroups = [];
+
     const response = await fetch(sheetURL);
 
     const data = await response.text();
@@ -470,7 +472,7 @@ async function loadTimeline(){
             const eventsFilteredIncomplete = 
                 events.filter(
                     function(event) {
-                        return events.done !== "TRUE"
+                        return !event.done;
                     }
                 );
 
@@ -516,7 +518,6 @@ async function loadTimeline(){
                     "input[type='checkbox']"
                 );
             
-            const selectedGroups = [];
 
             checkboxes.forEach(
                 function(checkbox) {
