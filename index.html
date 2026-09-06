@@ -43,6 +43,12 @@ h1 {
     font-weight: normal;
 }
 
+.vis-labelset .vis-label .group-name{
+    font-weight:bold;
+    font-size: 15px;
+    display: block;
+}
+
 .topbar {
     display:flex;
     gap: 12px;
@@ -101,25 +107,18 @@ button:hover {
     background: #f0f0f0;
 }
 
-.group-name {
-    font-weight: bold;
-    font-size: 15px;
-    margin-bottom: 5px;
-}
-
-.group-person {
+.vis-labelset .vis-label .group-person {
     font-size: 12px;
     font-weight: normal;
     color: #666;
 
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    display: block;
 }
 
-.group-person span {
-    display: inline-block;
+.vis-labelset .vis-label .group-person span {
+    display: block;
     font-weight: normal;
+    margin-bottom: 2px;
 }
 
 </style>
