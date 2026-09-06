@@ -44,10 +44,18 @@ h1 {
     display: block;
 }
 
+.group-person {
+    display: block;
+    font-size: 12px !important;
+    font-weight: normal !important;
+    line-height: 1.25;
+    color: #666;
+}
+
 .group-title {
     display: block;
     font-family: Arial, sans-serif;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     color: #111;
     line-height: 1.2;
@@ -241,7 +249,7 @@ async function loadTimeline(){
                 .split(",")
                 .map(person => person.trim())
                 .filter(Boolean)
-                .map(person => `<div style="display:block;font-size:12px;font-weight:400;line-height:1.25;">${person}</div>`)
+                .map(person => `<div class="group-person">${person}</div>`)
                 .join("");
 
             groups.push({
@@ -274,7 +282,6 @@ async function loadTimeline(){
             console.log("not done")
         }
 
-        console.log("test")
 
 
         events.push({
@@ -342,41 +349,6 @@ async function loadTimeline(){
             orientation: "top",
             start: "2026-08-01",
             end: "2027-08-01",
-
-            groupTemplate: function (group) {
-                let html = `
-                    <div style="
-                        font-family: Arial, sans-serif;
-                        text-align: left;
-                    ">
-                        <div style="
-                            font-size: 18px;
-                            font-weight: bold;
-                            line-height: 1.2;
-                            margin-bottom: 5px;
-                        ">
-                            ${group.category}
-                        </div>
-                `;
-
-                for (let person of (group.people || [])) {
-                    html += `
-                        <div style="
-                            font-size: 12px;
-                            font-weight: normal;
-                            line-height: 1.25;
-                            color: #666;
-                        ">
-
-                            ${person}
-                        
-                        </div>
-                    `;
-                }
-
-                html +=  `</div>`;
-                return html;
-            }
         }
     );
 
