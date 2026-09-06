@@ -40,7 +40,7 @@ h1 {
 }
 
 .vis-labelset .vis-label {
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .topbar {
@@ -113,10 +113,8 @@ button:hover {
     color: #666;
 
     display: flex;
-    flex-wrap: wrap;
     flex-direction: column;
-    gap: 0 8px;
-    max-width: 180px;
+    gap: 2px;
 }
 
 .group-person span {
@@ -189,7 +187,7 @@ async function loadTimeline(){
     const peopleRows = peopleParsed.data.slice(1);
 
     for (let row of peopleRows){
-        peopleDict[row[0]] = row[1]
+        peopleDict[row[0].trim()] = (row[1] || "").trim();
     }
 
 
@@ -215,7 +213,7 @@ async function loadTimeline(){
 
         let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
         let color = row[6];
-        let category=row[5] || "Other";
+        let category= (row[5] || "Other").trim();
 
         let description=row[4];
 
