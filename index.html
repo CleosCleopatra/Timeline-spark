@@ -247,7 +247,12 @@ async function loadTimeline(){
             groups.push({
                 id:groupIDs[category],
                 name: category,
-                content: category,
+                content: `
+                    <div class="group-label">
+                        <div class="group-title">${category}</div>
+                        ${peopleHTML}
+                    </div>
+                    `,
                 category: category,
                 people: people
                     .split(",")
@@ -269,6 +274,7 @@ async function loadTimeline(){
             console.log("not done")
         }
 
+        console.log("test")
 
 
         events.push({
