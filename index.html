@@ -386,7 +386,7 @@ async function loadTimeline(){
     let current_month = current_date.getMonth() + 1;
     let current_year = current_date.getFullYear();
 
-    console.log("testo")
+    console.log("test")
 
     const items = new vis.DataSet(events);
     const groupItems = new vis.DataSet(groups);
@@ -615,7 +615,7 @@ function showEventPopup(event) {
     popup.innerHTML = `
         <div class="event-popup-content">
             <button class="close-popup"
-                    onclick="document.getElementByID('eventPopup').remove()">
+                    onclick="document.getElementById('eventPopup').remove()">
                 ×
             </button>
 
@@ -645,7 +645,7 @@ function showEventPopup(event) {
                 }
             </p>
 
-            <button if="doneButton">
+            <button id="doneButton">
                 ${event.done
                     ? "↩ Mark as incomplete"
                     : "✓ Mark as done"
