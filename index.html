@@ -220,7 +220,7 @@ async function loadTimeline(){
 
             const people = peopleDict[category] || [];
 
-            const peopelHTML = people 
+            const peopleHTML = people 
                 .split(",")
                 .map(person => `<span>${person.trim()}</span>`)
                 .join("");
