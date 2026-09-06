@@ -238,17 +238,22 @@ async function loadTimeline(){
             const peopleHTML = people 
                 .split(",")
                 .map(person => person.trim())
-                .filter(person => person !== "")
-                .map(person => `<div class = "person-line">${person}</div>`)
+                .filter(Boolean)
+                .map(person => `<div style="display:block;font-size:12px;font-weight:400;line-height:1.25;">${person}</div>`)
                 .join("");
 
             groups.push({
-
                 id:groupIDs[category],
                 name: category,
                 content: `
-                    <div class = "group-name">${category}</div>
-                    <div class="group-person">${peopleHTML}</div>`
+                    <div>
+                        <div style = "font-size:16px; font-weight:700; line-height:1.2;margin-bottom:4px;color:#111;">
+                            ${category}
+                        </div>
+                        <div style = "font-size: 12 px; font-weight:400; line-height:1.25; color:#666;">
+                            ${peopleHTML}
+                        </div>
+                    </div>`
             });
 
         }
