@@ -102,6 +102,20 @@ button:hover {
     background: #f0f0f0;
 }
 
+.group-name {
+    font-weight: bold;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.group-person {
+    font-size: 13px;
+    font-weight: normal;
+    color: #666;
+    margin-left: 8px;
+    line-height: 1.4;
+}
+
 </style>
 
 </head>
@@ -142,7 +156,11 @@ button:hover {
 <script>
 
 const sheetURL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vTox_xNzPx8-4xMTXq0oV55wZb1bhNKEpHhzlgbyHuwqNjiNvpN90TMONIAqP0q8YxFDWvmvz9iH_Jr/pub?output=csv";
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vTox_xNzPx8-4xMTXq0oV55wZb1bhNKEpHhzlgbyHuwqNjiNvpN90TMONIAqP0q8YxFDWvmvz9iH_Jr/pub?gid=1606621&single=true&output=csv";
+
+
+const peopleURL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vTox_xNzPx8-4xMTXq0oV55wZb1bhNKEpHhzlgbyHuwqNjiNvpN90TMONIAqP0q8YxFDWvmvz9iH_Jr/pub?gid=1606621&single=true&output=csv";
 
 async function loadTimeline(){
 
@@ -154,6 +172,17 @@ async function loadTimeline(){
 
     const parsed = Papa.parse(data, {header:false});
     const rows = parsed.data.slice(1);
+
+    var peopleDict = new Object();
+
+    const peopleResponse = await fetch(peopleURL);
+    const peopleData = await peopleResponse.text();
+    const peopleParsed = Papa.parse(peopleData, {header:false});
+    const peopleRows = peopleParsed.peopleData.slice(1);
+
+    for (let row of peopleRows){
+        peopleDict[row[0]] = row[1]
+    }
 
 
     let groups = [];
@@ -186,11 +215,14 @@ async function loadTimeline(){
 
             groupIDs[category]=groups.length+1;
 
+            const people = peopleDict[category] || [];
+
             groups.push({
 
                 id:groupIDs[category],
-                content:category
-
+                content: `
+                    <div class = "group-name">${category}</div>
+                    <div class="group-person">${person}</div>`
             });
 
         }
