@@ -413,7 +413,6 @@ async function loadTimeline(){
                     `${completed} of ${total} completed (${percentage}%)`;
     }
 
-    updateProgress(events);
 
 
 
@@ -437,6 +436,8 @@ async function loadTimeline(){
             );
         timeline.setWindow(start, end);
     };
+
+    updateProgress(events);
 }
 
 loadTimeline();
