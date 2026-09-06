@@ -469,34 +469,22 @@ async function loadTimeline(){
     incompleteButton.addEventListener(
         "click",
         function() {
-            const eventsFilteredIncomplete = 
-                events.filter(
-                    function(event) {
-                        return !event.done;
-                    }
-                );
+            const button = document.getElementById("incompleteOnly");
 
-            items.clear();
+            if (button.textContent === "Incomplete only") {
+                const incompleteEvents = events.filter(function(event) {
+                    return !event.done;
+                });
 
-            items.add(eventsFilteredIncomplete);
+                timeline.setItems(new vis.Dataset(incompleteEvents));
 
-            const visibleGroupsIncomplete = 
-                groups.filter(
-                    function(group) {
-                        return selectedGroups.includes(
-                            group.id
-                        );
-                    }
-                );
-            
-            groupItems.clear();
+                button.textContent = "Show all events";
+            } else {
+                timeline.setItems(new vis.Dataset(events));
 
-            groupItems.add(visibleGroupsIncomplete);
-
-            updateProgress(eventsFilteredIncomplete);
+                button.textContent = "Incomplete only";
+            }
         }
-
-
     )
 
     filterButton.addEventListener(
