@@ -178,7 +178,7 @@ async function loadTimeline(){
     const peopleResponse = await fetch(peopleURL);
     const peopleData = await peopleResponse.text();
     const peopleParsed = Papa.parse(peopleData, {header:false});
-    const peopleRows = peopleParsed.peopleData.slice(1);
+    const peopleRows = peopleParsed.data.slice(1);
 
     for (let row of peopleRows){
         peopleDict[row[0]] = row[1]
