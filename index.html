@@ -255,12 +255,6 @@ async function loadTimeline(){
             groups.push({
                 id:groupIDs[category],
                 name: category,
-                content: `
-                    <div class="group-label">
-                        <div class="group-title">${category}</div>
-                        ${peopleHTML}
-                    </div>
-                    `,
                 category: category,
                 people: people
                     .split(",")
@@ -334,8 +328,8 @@ async function loadTimeline(){
     let current_month = current_date.getMonth() + 1;
     let current_year = current_date.getFullYear();
 
-    console.log("test")
-    
+    console.log("testar")
+
     const items = new vis.DataSet(events);
     const groupItems = new vis.DataSet(groups);
 
@@ -351,13 +345,38 @@ async function loadTimeline(){
             orientation: "top",
             start: "2026-08-01",
             end: "2027-08-01",
+
+            groupTemplate: function(group) {
+                 const container = document.createElement("div");
+
+                const title = document.createElement("div");
+
+                title.textContent = group.category;
+
+                title.style.fontSize = "18px";
+                title.style.fontWeight = "bold";
+                title.style.display = "block";
+
+                container.appendChild(title);
+
+                for (const person of group.people) {
+
+                    const personElement = document.createElement("div");
+
+                    personElement.textContent = person;
+
+                    personElement.style.fontSize = "12px";
+                    personElement.style.fontWeight = "normal";
+                    personElement.style.display = "block";
+                    personElement.style.color = "#666";
+
+                    container.appendChild(personElement);
+                }
+
+                return container;
+            }
         }
     );
-    document.querySelector(".vis-labelset .vis-label").innerHTML = `
-        <div style="font-size:30px !important; font-weight:900 !important; color:red !important;">
-            TEST
-        </div>
-    `;
 
     const filterButton = document.getElementById("filterButton");
     const filterMenuElement = document.getElementById("filterMenu");
