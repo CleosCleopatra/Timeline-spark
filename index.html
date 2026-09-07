@@ -274,6 +274,20 @@ button:hover {
     background: #f0f0f0;
 }
 
+.filter-actions {
+    display: flex;
+    gap: 5px;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 5px;
+}
+
+.filter-actions button {
+    flex: 1;
+    padding: 6px;
+    font-size: 12px;
+}
+
 
 
 </style>
@@ -311,7 +325,15 @@ button:hover {
         </button>
 
         <div class = "filter-menu" id = "filterMenu">
-            <!--Place to create checkboxes-->
+            <div class="filter-actions">
+                <button type = "button" id="selectAllGroups">
+                    Select all
+                </button>
+
+                <button type = "button" id = "selectNoneGroups">
+                    Select none
+                </button>
+            </div>
         </div>
     </div>
 
@@ -847,6 +869,31 @@ async function loadTimeline(){
 
         filterMenu.appendChild(label);
     });
+
+    document.getElementById("selectAllGroups").onclick = function() {
+
+        const checkboxes = filterMenu.querySelectorAll(
+            "input[type='checkbox']"
+        );
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked =true;
+        });
+
+        checkboxes[0]?.dispatchEvent(new Event("change", {bubbles:true}));
+    };
+
+    document.getElementById("selectNoneGroups").onclick = function() {
+        const checkboxes = filterMenu.querySelectorAll(
+            "input[type='checkbox']"
+        );
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+
+        checkboxes[0]?.dispatchEvent(new Event("change", {bubbles: true}));
+    }
 
     console.log("FINAL EVENTS:", events);
     console.log("FINAL GROUPS:", groups);
