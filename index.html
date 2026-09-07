@@ -953,6 +953,10 @@ async function loadTimeline(){
         }
     );
 
+    await new Promise(requestAnimationFrame)
+
+    updateProgress(events);
+
     timeline.on("select", function(properties) {
         if (properties.items.length === 0) {
             return;
