@@ -490,7 +490,7 @@ function showMeetingView(events, groups) {
                 </h3>
 
                 ${renderTasks(
-                    dueByNextMeeting,
+                    dueBeforeNextMeeting,
                     groups,
                     "No tasks are due before the next meeting."
                 )}
@@ -1028,16 +1028,16 @@ async function loadTimeline(){
 
         const today = new Date();
 
-        const dueByToday = currentEvents.filter(event =>
+        const dueBeforeToday = currentEvents.filter(event =>
             new Date(event.start) <= today
         );
 
         const completed = 
-            dueByToday.filter(
+            dueBeforeToday.filter(
                 event => event.done
             ).length;
 
-        const total = dueByToday.length;
+        const total = dueBeforeToday.length;
 
         const percentage = 
             total === 0
