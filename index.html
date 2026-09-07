@@ -1066,7 +1066,7 @@ async function loadTimeline(){
                 groupItems.clear();
 
                 groupItems.add(visibleGroups);
-
+                
                 updateProgress(filteredEvents);
         }
     );
@@ -1121,7 +1121,9 @@ async function loadTimeline(){
         timeline.setWindow(start, end);
     };
 
-    updateProgress(events);
+    setTimeout(function() {
+        updateProgress(events);
+    }, 0);
 
 }
 
