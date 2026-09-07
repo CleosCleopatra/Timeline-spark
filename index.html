@@ -336,7 +336,7 @@ const updateURL =
 "https://script.google.com/macros/s/AKfycby3fhEZisevJQIDVZIpjtJ3lOUYQNXawk5jXrEhFDIHUSr2_ntukOXSPLbJ2hoqTasU/exec";
 
 
-function showMeetingView(event, groups) {
+function showMeetingView(events, groups) {
     const container = 
         document.getElementById("meetingViewContainer");
 
@@ -344,7 +344,7 @@ function showMeetingView(event, groups) {
         document.getElementById("timeline");
     
     const progress = 
-        document.groupItems("progress");
+        document.getElementById("progress");
     
     const topbar = 
         document.querySelector(".topbar");
@@ -363,7 +363,7 @@ function showMeetingView(event, groups) {
 
     const overdue = events.filter(event => {
         const date = new Date(event.start);
-        data.setHours(0,0,0,0);
+        date.setHours(0,0,0,0);
 
         return date < today && !event.done;
     });
@@ -390,9 +390,9 @@ function showMeetingView(event, groups) {
             });
     
         const completed = events.filter(event => event.done).length;
-        const incomplete = event.filter(event => !event.done).length;
+        const incomplete = events.filter(event => !event.done).length;
 
-        container.innterHTML = `
+        container.innerHTML = `
 
             <div class="meeting-header">
 
@@ -419,7 +419,7 @@ function showMeetingView(event, groups) {
                     type="date"
                     id="nextMeetingDate"
                     value = "${formatInputDate(nextMeeting)}"
-                <
+                >
             </div>
 
             <div class="meeting-summary">
@@ -436,7 +436,7 @@ function showMeetingView(event, groups) {
 
                 <div class="summary-card">
                     <div class="summary-number">
-                        ${dueByNextMeeting.length}
+                        ${dueBeforeNextMeeting.length}
                     </div>
 
                     <div class = "summary-label">
@@ -593,12 +593,12 @@ function renderTasks(tasks, groups, emptyText){
 }
 
 function formatDate(date) {
-    return date.toLocaleDataString( 
+    return date.toLocaleDateString( 
         "en-GB",
         {
             day: "numeric",
             month: "short",
-            year: "numberic"
+            year: "numeric"
         }
     );
 }
