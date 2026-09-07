@@ -949,11 +949,11 @@ async function loadTimeline(){
                     return !event.done;
                 });
 
-                timeline.setItems(new vis.Dataset(incompleteEvents));
+                timeline.setItems(new vis.DataSet(incompleteEvents));
 
                 button.textContent = "Show all events";
             } else {
-                timeline.setItems(new vis.Dataset(events));
+                timeline.setItems(new vis.DataSet(events));
 
                 button.textContent = "Incomplete only";
             }
