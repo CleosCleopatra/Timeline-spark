@@ -903,7 +903,7 @@ async function loadTimeline(){
     let current_month = current_date.getMonth() + 1;
     let current_year = current_date.getFullYear();
 
-    console.log("testar")
+    console.log("test")
 
     const items = new vis.DataSet(events);
     const groupItems = new vis.DataSet(groups);
@@ -1131,27 +1131,80 @@ async function loadTimeline(){
 
 }
 
-async function setEventDone(event, done) {
+async function setEventDone(event, done, groups) {
+
+    const oldDone = event.done;
+    const oldContent = event.content;
+    const oldStyle = event.style;
+
+    event.done = done
+    const today = new Date();
+
+    const startDate = new Date(event.start);
+    startDate.setHours(0,0,0,0);
+
+    let newStyle;
+
+    if (done) {
+        newStyle =
+            `background:${event.color};color:white;border:4px solid green`;
+    } else if (startdate <today){
+        newStyle =
+            `background:${event.color};color:white;border:4px solid red`;
+    }
+    else {
+        newStyle = 
+            `background:${event.color};color:white;border:1px solid ${event.color}`;
+    }
+
+    const newContent = done
+        ? "✓ " + event.content.replace("✓ ", "")
+        : event.content.replace("✓ ", "");
+
+    items.update({
+        id: event.id,
+        content: newContent,
+        style: newStyle
+    });
+
+    event.content = newContent;
+    event.style = newStyle;
+
+    const popup = document.getElementById("eventPopup");
+    if (popup) {
+        popup.remove();
+    }
+
+    showEventPopup(event, groups);
+
+    
+
+    updateProgress(events);
+
     try{
-        const response = await fetch(updateURL, {
+        await fetch(updateURL, {
             method: "POST",
+            mode: "no-cors",
             body: JSON.stringify({
                 row:event.sheetRow,
                 done: done
             })
         });
 
-        const result = await response.json();
-
-        if (!result.success) {
-            throw new Error(result.error);
-        }
-
-        event.done = done;
-
-        location.reload();
     } catch (error) {
         console.error(error);
+
+        event.done = oldDone;
+        event.content = oldContent;
+        event.style = oldStyle;
+
+        items.update({
+            id: event.id,
+            content: oldContent,
+            style: oldStyle
+        });
+
+        updateProgress(events);
 
         alert(
             "Could not update the assignment. Please try again"
@@ -1218,7 +1271,8 @@ function showEventPopup(event, groups) {
         function() {
             setEventDone(
                 event, 
-                !event.done
+                !event.done,
+                groups
             );
         };
 }
