@@ -357,6 +357,7 @@ const peopleURL =
 const updateURL = 
 "https://script.google.com/macros/s/AKfycby3fhEZisevJQIDVZIpjtJ3lOUYQNXawk5jXrEhFDIHUSr2_ntukOXSPLbJ2hoqTasU/exec";
 
+let items; 
 
 function showMeetingView(events, groups) {
     const container = 
@@ -843,6 +844,8 @@ async function loadTimeline(){
             title:description,
 
             style: style,
+
+            color: color,
             
             done:done == "TRUE"
         });
@@ -903,9 +906,9 @@ async function loadTimeline(){
     let current_month = current_date.getMonth() + 1;
     let current_year = current_date.getFullYear();
 
-    console.log("test")
+    console.log("testar")
 
-    const items = new vis.DataSet(events);
+    items = new vis.DataSet(events);
     const groupItems = new vis.DataSet(groups);
 
 
@@ -1131,7 +1134,7 @@ async function loadTimeline(){
 
 }
 
-async function setEventDone(event, done, groups) {
+async function setEventDone(event, done, items, groups) {
 
     const oldDone = event.done;
     const oldContent = event.content;
@@ -1179,7 +1182,7 @@ async function setEventDone(event, done, groups) {
 
     
 
-    updateProgress(events);
+    //updateProgress(events);
 
     try{
         await fetch(updateURL, {
@@ -1204,7 +1207,7 @@ async function setEventDone(event, done, groups) {
             style: oldStyle
         });
 
-        updateProgress(events);
+        //updateProgress(events);
 
         alert(
             "Could not update the assignment. Please try again"
