@@ -358,6 +358,8 @@ const updateURL =
 "https://script.google.com/macros/s/AKfycby3fhEZisevJQIDVZIpjtJ3lOUYQNXawk5jXrEhFDIHUSr2_ntukOXSPLbJ2hoqTasU/exec";
 
 let items; 
+let allEvents = [];
+let allGroups = [];
 
 function showMeetingView(events, groups) {
     const container = 
@@ -535,16 +537,6 @@ function showMeetingView(events, groups) {
 
             </div>
     `;
-    container
-        .querySelectorAll(".meeting-task[data-event-id]")
-        .forEach(task => {
-            task.addEventListener("click", function(){
-                const eventID = Number(this.dataset.eventId);
-                const event = events.find(event => event.id === eventID);
-                if (!event) { return; }
-                showEventPopup(event, groups);
-            });
-        });
 
     document
         .getElementById("backToTimeline")
@@ -761,10 +753,8 @@ async function loadTimeline(){
 
 
     let groups = [];
-    let groupIDs={};
-
-
-    let events=[];
+    let groupIDs = {};
+    let events = [];
 
 
     rows.forEach((row,index)=>{
@@ -864,6 +854,9 @@ async function loadTimeline(){
             done:done == "TRUE"
         });
     });
+
+    allEvents = events;
+    allGroups = groups;
 
     const filterMenu = document.getElementById("filterMenu");
 
@@ -1295,6 +1288,32 @@ function showEventPopup(event, groups) {
         };
 }
 
+document
+    .getElementById("meetingViewContainer")
+    .addEventListener("click", function(event) {
+
+        const task = event.target.closest(
+            ".meeting-task[data-event-id]"
+        );
+
+        if (!task) {
+            return;
+        }
+
+        const eventID = Number(
+            task.getAttribute("data-event-id")
+        );
+
+        const selectedEvent = meetingEvents.find(
+            e => e.id === eventID
+        );
+
+        if (!selectedEvent) {
+            return;
+        }
+
+        showEventPopup(selectedEvent, meetingGroups);
+    });
 loadTimeline();
 
 
