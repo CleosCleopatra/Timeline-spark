@@ -535,6 +535,16 @@ function showMeetingView(events, groups) {
 
             </div>
     `;
+    container
+        .querySelectorAll(".meeting-task[data-event-id]")
+        .forEach(task => {
+            task.addEventListener("click", function(){
+                const eventID = Number(this.dataset.eventID);
+                const event = events.find(event => event.id === eventID);
+                if (!event) { return; }
+                showEventPopup(event, groups);
+            });
+        });
 
     document
         .getElementById("backToTimeline")
@@ -581,7 +591,11 @@ function renderTasks(tasks, groups, emptyText){
 
         return `
 
-            <div class="meeting-task">
+            <div 
+                class="meeting-task"
+                data-event-id = "${event.id}"
+                style = "cursor:pointer;"
+            >
 
                 <div class="meeting-task-title">
                     ${event.done ? "✓ " : ""}
