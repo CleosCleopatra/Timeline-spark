@@ -539,7 +539,7 @@ function showMeetingView(events, groups) {
         .querySelectorAll(".meeting-task[data-event-id]")
         .forEach(task => {
             task.addEventListener("click", function(){
-                const eventID = Number(this.dataset.eventID);
+                const eventID = Number(this.dataset.eventId);
                 const event = events.find(event => event.id === eventID);
                 if (!event) { return; }
                 showEventPopup(event, groups);
