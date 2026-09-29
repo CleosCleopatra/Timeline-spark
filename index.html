@@ -766,7 +766,11 @@ async function loadTimeline(){
 
         if(!year || !title) return;
 
-        let date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2,'0')}`;
+        let date = new Date(
+            Number(year),
+            Number(month) - 1,
+            Number(day)
+        );
         let color = row[6];
         let category= (row[5] || "Other").trim();
 
@@ -921,8 +925,8 @@ async function loadTimeline(){
             zoomable: false,
             moveable: true,
             orientation: "top",
-            start: "2026-08-01",
-            end: "2027-08-01",
+            start: new Date(2026, 7, 1),
+            end: new Date(2027, 7, 1),
 
             groupTemplate: function(group) {
                  const container = document.createElement("div");
@@ -1108,7 +1112,10 @@ async function loadTimeline(){
 
 
     document.getElementById("fullWindow").onclick = function() {
-        timeline.setWindow("2026-06-01", "2027-06-01");
+        timeline.setWindow(
+            new Date(2026, 5, 1),
+            new Date(2027, 5, 1)
+        );
     };
     document.getElementById("thisMonth").onclick = function() {
         const now = new Date();
