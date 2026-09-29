@@ -724,7 +724,7 @@ async function loadTimeline(){
 
     let selectedGroups = [];
 
-    const response = await fetch(sheetURL + "?t=" + Date.now());
+    const response = await fetch(sheetURL);
 
     const data = await response.text();
     console.log(data);
